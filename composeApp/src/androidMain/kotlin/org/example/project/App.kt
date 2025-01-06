@@ -44,7 +44,7 @@ fun App() {
                 },
                 colors = androidx.compose.material.ButtonDefaults.buttonColors(backgroundColor = buttonColor)
             ) {
-                Text(text = "Click Me 2", color = Color.White)
+                Text(text = "Click Me 22", color = Color.White)
             }
             Text(
                 text = count.toString(),
