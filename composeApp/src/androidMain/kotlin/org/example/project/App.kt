@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.*
@@ -29,7 +30,7 @@ data class TodoItem(val id: String, val value: String)
 fun App() {
     var todo by remember { mutableStateOf("") }
 
-    var todoList by remember { mutableStateOf(listOf(TodoItem(id = "", value = ""))) }
+    var todoList by remember { mutableStateOf(listOf<TodoItem>()) }
 
     fun addTodoItem(id: String, value: String) {
         if (value.isEmpty()) return
@@ -38,49 +39,60 @@ fun App() {
     }
 
     fun removeTodoItem(id: String) {
-        todoList = todoList.filter { it.id != id }
+        todoList = todoList.filter { item -> item.id != id }
     }
 
     MaterialTheme {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
+        Scaffold(topBar = {
+            Text(
+                text = "Compose Todo App",
+                style = MaterialTheme.typography.h4,
+                modifier = Modifier.padding(16.dp)
+            )
+        }) {
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
+                    .fillMaxSize()
+                    .padding(it),
+                contentAlignment = Alignment.TopCenter
             ) {
-                TextField(
-                    value = todo,
-                    onValueChange = { todo = it },
-                    label = { Text("Enter Text") },
-                    modifier = Modifier.width(200.dp),
-                    singleLine = true
-                )
-                Button(onClick = {
-                    addTodoItem(id = UUID.randomUUID().toString(), value = todo)
-                }) {
-                    Text(
-                        text = "Create task",
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                ) {
+                    TextField(
+                        value = todo,
+                        onValueChange = { todo = it },
+                        label = { Text("Enter Text") },
+                        modifier = Modifier.width(200.dp),
+                        singleLine = true
                     )
+                    Button(onClick = {
+                        addTodoItem(id = UUID.randomUUID().toString(), value = todo)
+                    }) {
+                        Text(
+                            text = "Create task",
+                        )
+                    }
                 }
+            }
+
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                TodoListScreen(
+                    todoList,
+                    removeItem = { id -> removeTodoItem(id) })
             }
         }
 
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            TodoListScreen(
-                todoList,
-                removeItem = { id -> removeTodoItem(id) })
-        }
     }
 
 }
@@ -88,7 +100,7 @@ fun App() {
 @Composable
 fun TodoListScreen(todoList: List<TodoItem>, removeItem: (String) -> Unit = {}) {
     LazyColumn {
-        items(todoList) { task ->
+        items(todoList, key = { todo -> todo.id }) { task ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
