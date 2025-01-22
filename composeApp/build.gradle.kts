@@ -65,6 +65,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.material3.android)
     debugImplementation(compose.uiTooling)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 }
 
