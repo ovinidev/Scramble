@@ -1,15 +1,18 @@
-package com.ui.theme.game
+package com.ui.theme.scramble.ui
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.words.project.allWords
 
 class GameViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(GameUiState())
-    val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<GameUiState> = _uiState
+
+    init {
+        newGame()
+    }
 
     fun updateInputValue(inputValue: String) {
         _uiState.update { it.copy(inputValue = inputValue) }

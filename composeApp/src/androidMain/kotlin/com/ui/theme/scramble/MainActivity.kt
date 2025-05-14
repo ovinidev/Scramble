@@ -1,4 +1,4 @@
-package org.example.project
+package com.ui.theme.scramble
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

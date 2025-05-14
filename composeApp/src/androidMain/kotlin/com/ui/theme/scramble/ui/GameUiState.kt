@@ -1,4 +1,4 @@
-package com.ui.theme.game
+package com.ui.theme.scramble.ui
 
 data class GameUiState(
     val score: Int = 0,

@@ -1,10 +1,9 @@
-package com.ui.theme.game
+package com.ui.theme.scramble.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,7 +18,6 @@ import androidx.compose.material.OutlinedButton
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,15 +30,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.words.project.allWords
 
 @Composable
-fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
+fun GameScreen() {
+    val gameViewModel = viewModel<GameViewModel>()
     val gameUiState by gameViewModel.uiState.collectAsState()
 
     val isGameFinished = gameUiState.isGameFinished
     val isLastRound = gameUiState.currentWordCount == allWords.size
-   
-    LaunchedEffect(Unit) {
-        gameViewModel.getRandomWord()
-    }
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -57,33 +52,35 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-        }
 
-        Text(
-            text = gameUiState.currentScrambleWord,
-            style = MaterialTheme.typography.h4.copy(fontSize = 36.sp),
-            color = MaterialTheme.colors.secondary,
-            textAlign = TextAlign.Center
-        )
+            Text(
+                text = gameUiState.currentScrambleWord,
+                style = MaterialTheme.typography.h4.copy(fontSize = 36.sp),
+                color = MaterialTheme.colors.secondary,
+                textAlign = TextAlign.Center
+            )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        TextField(
-            value = gameUiState.inputValue,
-            onValueChange = { value -> gameViewModel.updateInputValue(value) },
-            placeholder = {
-                Text(text = "Enter the word", style = MaterialTheme.typography.body1)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { gameViewModel.submit() }),
-            singleLine = true,
-            colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = MaterialTheme.colors.surface,
-                focusedIndicatorColor = MaterialTheme.colors.primary,
-                unfocusedIndicatorColor = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
+        if (!gameUiState.isGameFinished) {
+            TextField(
+                value = gameUiState.inputValue,
+                onValueChange = { value -> gameViewModel.updateInputValue(value) },
+                placeholder = {
+                    Text(text = "Enter the word", style = MaterialTheme.typography.body1)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { gameViewModel.submit() }),
+                singleLine = true,
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = MaterialTheme.colors.surface,
+                    focusedIndicatorColor = MaterialTheme.colors.primary,
+                    unfocusedIndicatorColor = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
+                )
             )
-        )
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -136,10 +133,15 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = "Score: ${gameUiState.score}",
-            style = MaterialTheme.typography.h5,
-            color = MaterialTheme.colors.primary
-        )
+        Score(score = gameUiState.score)
     }
+}
+
+@Composable
+fun Score(score: Int) {
+    Text(
+        text = "Score: $score",
+        style = MaterialTheme.typography.h5,
+        color = MaterialTheme.colors.primary
+    )
 }
